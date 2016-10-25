@@ -8,7 +8,7 @@ The output includes:
 
 1. A list of available code points for each platform
 2. A list of code points available on all platforms (the intersection of #1)
-3. A Python-style regex matching #2
+3. A Python-style (using 8-digit `\U` literals) regex matching #2
 
 # Supported systems
 
@@ -27,6 +27,7 @@ Tools for iOS and Android are currently available.
 1. Install and launch the GlyphTester app to a supported physical device or simulator
 2. Tap the Go button
 3. A sharing sheet will appear; send the file to yourself via AirDrop, etc.
+  - On the simulator, look for a log message indicating the path to the file on your local machine, and copy it from there
 4. Put the resulting `ios*-glyphs.txt` file in the `work` directory at the root of this repo
 
 ## Android Preparation
