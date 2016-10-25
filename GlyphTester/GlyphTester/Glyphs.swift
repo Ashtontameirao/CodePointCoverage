@@ -41,7 +41,7 @@ class Glyphs {
         
         let end = Date().timeIntervalSince(start)
         print("Processing time: \(end.rounded()) s")
-
+        print("Output file: \(outfile)")
         return outfile
     }
 
