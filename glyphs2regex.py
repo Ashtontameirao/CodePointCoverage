@@ -10,16 +10,14 @@ import sys
 
 ranges = []
 
-r_start = 0
-r_last = -1
-
 for line in sys.stdin:
     _, hx = line.strip().split('+')
     n = int(hx, base=16)
-    if n - 1 != r_last:
-        ranges.append((r_start, r_last))
-        r_start = n
-    r_last = n
+    start, end = ranges[-1] if ranges else (None, None)
+    if n - 1 == end:
+        ranges[-1] = (start, n)
+    else:
+        ranges.append((n, n))
 
 regex_ranges = []
 
