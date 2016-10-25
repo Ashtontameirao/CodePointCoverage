@@ -18,7 +18,7 @@ Tools for iOS and Android are currently available.
 
 - Running the iOS app requires iOS 8 or later
 - Building the iOS app requires a Mac with Xcode 8 or later 
-- Android requires a "wide" build of Python 2.7 or later
+- Python 2.7 or later (a "wide" build is required to make full use of the regex output)
 
 # How To
 
