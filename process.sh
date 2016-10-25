@@ -12,7 +12,7 @@ fi
 
 for IOS_GLYPHS in work/ios*-glyphs.txt; do
     echo "Filtering ${IOS_GLYPHS#work/}"
-    grep -v "lastresorttemplate" $IOS_GLYPHS > ${IOS_GLYPHS%.txt}-available.txt
+    grep -vE "lastresort(template|privateplane16|privateuse)" $IOS_GLYPHS > ${IOS_GLYPHS%.txt}-available.txt
 done
 
 for ANDROID_PLATFORM in $ANDROID_HOME/platforms/android-*; do
