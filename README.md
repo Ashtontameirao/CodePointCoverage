@@ -10,6 +10,8 @@ The output includes:
 2. A list of code points available on all platforms (the intersection of #1)
 3. A Python-style (using 8-digit `\U` literals) regex matching #2
 
+Pre-calculated output covering iOS 8.1–10.1 and Android SDK 7–25 is [available on Bintray](https://bintray.com/amake/generic/CodePointCoverage/1.0#files).
+
 # Supported systems
 
 Tools for iOS and Android are currently available.
