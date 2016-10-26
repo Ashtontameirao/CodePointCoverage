@@ -32,7 +32,7 @@ for IOS_GLYPHS in work/ios*-glyphs-available.txt; do
             | cut -d ' ' -f 1 \
             | sort \
             | uniq -d \
-            | tee done/$PLATFORMS-common-glyphs.txt \
+            | tee done/$PLATFORMS-common-codepoints.txt \
             | env/bin/python codepoints2regex.py > done/$PLATFORMS-common-regex.txt
     done
 done
