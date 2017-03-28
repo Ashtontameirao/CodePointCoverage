@@ -27,13 +27,15 @@ class Glyphs {
         
         let start = Date()
 
-        iterateCodePoints { c, name in
-            let line = String(format: "U+%06x \(name)\n", c)
-            let data = line.data(using: String.Encoding.utf8, allowLossyConversion: false)!
-            handle.write(data)
-            if (c % 1000 == 0) {
-                handle.synchronizeFile()
-                progress(c, UnicodeMax)
+        AllUnicode.lazy.filter { !Surrogates.contains($0) }.forEach { c in
+            autoreleasepool {
+                let line = getLineForCodePoint(c)
+                let data = line.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+                handle.write(data)
+                if (c % 1000 == 0) {
+                    handle.synchronizeFile()
+                    progress(c, UnicodeMax)
+                }
             }
         }
         
@@ -44,27 +46,22 @@ class Glyphs {
         print("Output file: \(outfile)")
         return outfile
     }
-
-    static func iterateCodePoints(process: (Int, String) -> Void) {
-        for c in AllUnicode {
-            if case Surrogates = c {
-                continue
-            }
-            let name: String?
-            do {
-                name = try getNameForCodePoint(c)
-            } catch CodePointNamingError.nameUnavailable(let msg) {
-                name = "(\(msg))"
-            } catch {
-                // Impossible
-                name = nil
-            }
-            process(c, name!)
-        }
-    }
     
     enum CodePointNamingError: Error {
         case nameUnavailable(String)
+    }
+    
+    static func getLineForCodePoint(_ codePoint: Int) -> String {
+        let label: String
+        do {
+            label = try getNameForCodePoint(codePoint)
+        } catch CodePointNamingError.nameUnavailable(let msg) {
+            label = "(\(msg))"
+        } catch {
+            // Impossible
+            label = "(Error)"
+        }
+        return String(format: "U+%06x \(label)\n", codePoint)
     }
     
     static func getNameForCodePoint(_ codePoint: Int) throws -> String {
