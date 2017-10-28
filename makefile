@@ -41,8 +41,8 @@ available: $(ios_versions:%=work/ios%-glyphs-available.txt) \
 work/ios%-glyphs-available.txt: work/ios%-glyphs.txt
 	grep -vE "lastresort(template|privateplane16|privateuse)" $^ > $@
 
-work/android%-glyphs-available.txt: $(ANDROID_HOME)/platforms/android-% | .env
-	.env/bin/python list-ttf-chars.py $^/data/fonts/*.ttf > $@
+work/android%-glyphs-available.txt: | $(ANDROID_HOME)/platforms/android-% .env
+	.env/bin/python list-ttf-chars.py $(firstword $|)/data/fonts/*.ttf > $@
 
 .env:
 	virtualenv .env
