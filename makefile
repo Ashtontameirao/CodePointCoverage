@@ -9,7 +9,7 @@ ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo = ios$(ios)-android$(android)
 
-.PHONY: all default regex codepoints allRegex allCodepoints clean
+.PHONY: all default regex codepoints allRegex allCodepoints clean available
 
 default: regex codepoints
 
@@ -34,6 +34,9 @@ ios%-glyphs.txt:
 	cd $(@D); curl -sLO https://dl.bintray.com/amake/generic/20170828/work/$(@F)
 
 .PRECIOUS: work/ios%-glyphs-available.txt work/android%-glyphs-available.txt
+
+available: $(ios_versions:%=work/ios%-glyphs-available.txt) \
+	$(android_versions:%=work/android%-glyphs-available.txt)
 
 work/ios%-glyphs-available.txt: work/ios%-glyphs.txt
 	grep -vE "lastresort(template|privateplane16|privateuse)" $^ > $@

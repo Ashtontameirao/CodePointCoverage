@@ -19,12 +19,14 @@ Tools for iOS and Android are currently available.
 # Requirements
 
 - Running the iOS app requires iOS 8 or later
-- Building the iOS app requires a Mac with Xcode 8 or later 
+- Building the iOS app requires a Mac with Xcode 8 or later
 - Python 2.7 or later (a "wide" build is required to make full use of the regex output)
 
 # How To
 
 ## iOS Preparation
+
+Pre-compiled data for iOS is available on Bintray and will be downloaded automatically as needed. To gather the data yourself, follow these instructions
 
 1. Install and launch the GlyphTester app to a supported physical device or simulator
 2. Tap the Go button
@@ -39,8 +41,17 @@ Tools for iOS and Android are currently available.
 
 ## Creating the Output
 
-1. Run `processing.sh` from the root of the repo
-2. Per-platform available code point lists will appear in `work`; universally available code point lists and regex will appear in `done`
+1. Run `make` from the root of the repo to output common codepoints and regex for the latest platform versions. Results are in `dist`.
+2. Run `make android=x ios=y` to specify the platform versions
+3. Run `make all` to generate common codepoints and regex for all combinations of platforms (this takes a while; consider running it in parallel with e.g. `-j$(sysctl -n hw.ncpu)`).
+
+## Querying the Output
+
+The `cpc.sh` script allows you to query the data for the following. Run it without arguments to see help.
+
+- `diff`: List codepoints differing in availability between two platforms, in `U+xxxxxx` format
+- `diffText`: Same as `diff`, but the output is plain text
+- `available`: List platforms on which all codepoints in some text are available
 
 # License
 
