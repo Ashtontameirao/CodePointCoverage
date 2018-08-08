@@ -9,7 +9,11 @@ import sys
 for line in sys.stdin:
     _, hx = line.strip().split('+')
     n = int(hx, base=16)
-    char = unichr(n)
-    sys.stdout.write(char.encode('utf-8'))
+    try:
+        char = unichr(n)
+        out = char.encode('utf-8')
+    except NameError:
+        out = chr(n)
+    sys.stdout.write(out)
 
 print
