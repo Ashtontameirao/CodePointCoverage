@@ -5,12 +5,17 @@ android_latest = $(lastword $(android_versions))
 combos = $(foreach av,$(android_versions),$(ios_versions:%=ios%-android$(av)))
 combo_latest = ios$(ios_latest)-android$(android_latest)
 
+bintray_version = 20180918
+include .bintray
+export
+
 all_regex =  $(combos:%=dist/%-common-regex.txt)
 all_codepoints = $(combos:%=dist/%-common-codepoints.txt)
 raw_glyphs = $(ios_versions:%=work/ios%-glyphs.txt)
 available_glyphs = $(ios_versions:%=work/ios%-glyphs-available.txt) \
 	$(android_versions:%=work/android%-glyphs-available.txt)
 tarballs = $(available_glyphs:%=%.tar.gz) $(raw_glyphs:%=%.tar.gz)
+distfiles = $(all_regex) $(all_codepoints)
 
 ios ?= $(ios_latest)
 android ?= $(android_latest)
@@ -47,6 +52,19 @@ available: $(available_glyphs)
 iosGlyphs: $(ios_versions:%=work/ios%-glyphs.txt)
 
 tarballs: $(tarballs)
+
+empty :=
+space := $(empty) $(empty)
+delim := ,
+define BINTRAY_PUSH
+curl -T "{$(subst $(space),$(delim),$1)}" \
+	-u$$BINTRAY_USER:$$BINTRAY_KEY \
+	https://api.bintray.com/content/$$BINTRAY_USER/generic/CodePointCoverage/$(bintray_version)/$(bintray_version)/$2/
+endef
+
+publish: $(tarballs) $(distfiles)
+	$(call BINTRAY_PUSH,$(tarballs),work)
+	$(call BINTRAY_PUSH,$(distfiles),dist)
 
 work/%.tar.gz: work/%
 	cd $(@D); tar zcvf $(@F) $(^F)
