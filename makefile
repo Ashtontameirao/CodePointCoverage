@@ -5,6 +5,11 @@ android_latest = $(lastword $(android_versions))
 combos = $(foreach av,$(android_versions),$(ios_versions:%=ios%-android$(av)))
 combo_latest = ios$(ios_latest)-android$(android_latest)
 
+all_regex =  $(combos:%=dist/%-common-regex.txt)
+all_codepoints = $(combos:%=dist/%-common-codepoints.txt)
+available_glyphs = $(ios_versions:%=work/ios%-glyphs-available.txt) \
+	$(android_versions:%=work/android%-glyphs-available.txt)
+
 ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo = ios$(ios)-android$(android)
@@ -19,9 +24,9 @@ codepoints: dist/$(combo)-common-codepoints.txt dist/$(combo)-common-codepoints.
 
 all: allRegex allCodepoints
 
-allRegex: $(combos:%=dist/%-common-regex.txt)
+allRegex: $(all_regex)
 
-allCodepoints: $(combos:%=dist/%-common-codepoints.txt)
+allCodepoints: $(all_codepoints)
 
 dist work:
 	mkdir -p $@
@@ -35,8 +40,7 @@ ios%-glyphs.txt:
 
 .PRECIOUS: work/ios%-glyphs-available.txt work/android%-glyphs-available.txt
 
-available: $(ios_versions:%=work/ios%-glyphs-available.txt) \
-	$(android_versions:%=work/android%-glyphs-available.txt)
+available: $(available_glyphs)
 
 work/ios%-glyphs-available.txt: work/ios%-glyphs.txt
 	grep -vE "lastresort(template|privateplane16|privateuse)" $^ > $@
