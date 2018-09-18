@@ -14,7 +14,7 @@ ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo = ios$(ios)-android$(android)
 
-.PHONY: all default regex codepoints allRegex allCodepoints clean available
+.PHONY: all default regex codepoints allRegex allCodepoints clean available iosGlyphs
 
 default: regex codepoints
 
@@ -41,6 +41,8 @@ ios%-glyphs.txt:
 .PRECIOUS: work/ios%-glyphs-available.txt work/android%-glyphs-available.txt
 
 available: $(available_glyphs)
+
+iosGlyphs: $(ios_versions:%=work/ios%-glyphs.txt)
 
 work/ios%-glyphs-available.txt: work/ios%-glyphs.txt
 	grep -vE "lastresort(template|privateplane16|privateuse)" $^ > $@
