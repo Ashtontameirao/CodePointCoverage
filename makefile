@@ -43,7 +43,9 @@ clean:
 
 ios%-glyphs.txt:
 	mkdir -p $(@D)
-	cd $(@D); curl -sLO https://dl.bintray.com/amake/generic/20170828/work/$(@F)
+	cd $(@D); curl -sL \
+		https://dl.bintray.com/amake/generic/$(bintray_version)/work/$(@F).tar.gz | \
+		tar xvz > $(@F)
 
 .PRECIOUS: work/ios%-glyphs-available.txt work/android%-glyphs-available.txt
 
