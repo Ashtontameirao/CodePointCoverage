@@ -7,14 +7,16 @@ combo_latest = ios$(ios_latest)-android$(android_latest)
 
 all_regex =  $(combos:%=dist/%-common-regex.txt)
 all_codepoints = $(combos:%=dist/%-common-codepoints.txt)
+raw_glyphs = $(ios_versions:%=work/ios%-glyphs.txt)
 available_glyphs = $(ios_versions:%=work/ios%-glyphs-available.txt) \
 	$(android_versions:%=work/android%-glyphs-available.txt)
+tarballs = $(available_glyphs:%=%.tar.gz) $(raw_glyphs:%=%.tar.gz)
 
 ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo = ios$(ios)-android$(android)
 
-.PHONY: all default regex codepoints allRegex allCodepoints clean available iosGlyphs
+.PHONY: all default regex codepoints allRegex allCodepoints clean available iosGlyphs tarballs
 
 default: regex codepoints
 
@@ -43,6 +45,11 @@ ios%-glyphs.txt:
 available: $(available_glyphs)
 
 iosGlyphs: $(ios_versions:%=work/ios%-glyphs.txt)
+
+tarballs: $(tarballs)
+
+work/%.tar.gz: work/%
+	cd $(@D); tar zcvf $(@F) $(^F)
 
 work/ios%-glyphs-available.txt: work/ios%-glyphs.txt
 	grep -vE "lastresort(template|privateplane16|privateuse)" $^ > $@
