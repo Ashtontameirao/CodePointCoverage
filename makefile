@@ -6,8 +6,10 @@ combos = $(foreach av,$(android_versions),$(ios_versions:%=ios%-android$(av)))
 combo_latest = ios$(ios_latest)-android$(android_latest)
 
 bintray_version = 20180918
-include .bintray
-export
+ifneq ($(wildcard .bintray),)
+	include .bintray
+	export
+endif
 
 all_regex =  $(combos:%=dist/%-common-regex.txt)
 all_codepoints = $(combos:%=dist/%-common-codepoints.txt)
