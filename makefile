@@ -74,7 +74,7 @@ work/%.tar.gz: work/%
 	cd $(@D); tar zcvf $(@F) $(^F)
 
 work/ios%-glyphs-available.txt: work/ios%-glyphs.txt
-	grep -vE "lastresort(template|privateplane16|privateuse)" $^ > $@
+	grep -vE "lastresort(template|privateplane16|privateuse)|\(failed to get glyph name\)" $^ > $@
 
 work/android%-glyphs-available.txt: | $(ANDROID_HOME)/platforms/android-% .env
 	.env/bin/python list-ttf-chars.py $(firstword $|)/data/fonts/*.ttf > $@
