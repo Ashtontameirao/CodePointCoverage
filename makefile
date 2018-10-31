@@ -23,7 +23,7 @@ ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo = ios$(ios)-android$(android)
 
-.PHONY: all default regex codepoints allRegex allCodepoints clean available iosGlyphs tarballs
+.PHONY: all default regex codepoints allRegex allCodepoints clean available iosGlyphs tarballs publish
 
 default: regex codepoints
 
