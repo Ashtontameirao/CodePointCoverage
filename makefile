@@ -5,7 +5,7 @@ android_latest = $(lastword $(android_versions))
 combos = $(foreach av,$(android_versions),$(ios_versions:%=ios%-android$(av)))
 combo_latest = ios$(ios_latest)-android$(android_latest)
 
-bintray_version = 20180918
+bintray_version = 20181031
 ifneq ($(wildcard .bintray),)
 	include .bintray
 	export
