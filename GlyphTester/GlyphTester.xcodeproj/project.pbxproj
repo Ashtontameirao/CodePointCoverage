@@ -94,7 +94,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Aaron Madlon-Kay";
 				TargetAttributes = {
 					C45A344F1CFD10E800F4C6DD = {
@@ -106,7 +106,7 @@
 			};
 			buildConfigurationList = C45A344B1CFD10E800F4C6DD /* Build configuration list for PBXProject "GlyphTester" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
