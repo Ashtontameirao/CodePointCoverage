@@ -72,6 +72,9 @@ class Glyphs {
         let text = NSTextStorage(attributedString: NSAttributedString(string: string))
         let layoutManager = NSLayoutManager()
         text.addLayoutManager(layoutManager)
+        guard layoutManager.isValidGlyphIndex(0) else {
+            throw CodePointNamingError.nameUnavailable("invalid glyph index")
+        }
         let glyph = layoutManager.glyph(at: 0)
         let attr = text.attribute(.font, at: 0, longestEffectiveRange: nil, in: NSMakeRange(0, 1))
         guard let font = attr as? UIFont else {
