@@ -23,23 +23,28 @@ ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo = ios$(ios)-android$(android)
 
-.PHONY: all default regex codepoints allRegex allCodepoints clean available iosGlyphs tarballs publish
-
+.PHONY: default
 default: regex codepoints
 
+.PHONY: regex
 regex: dist/$(combo)-common-regex.txt dist/$(combo)-common-codepoints.txt
 
+.PHONY: codepoints
 codepoints: dist/$(combo)-common-codepoints.txt dist/$(combo)-common-codepoints.txt
 
+.PHONY: all
 all: allRegex allCodepoints
 
+.PHONY: allRegex
 allRegex: $(all_regex)
 
+.PHONY: allCodepoints
 allCodepoints: $(all_codepoints)
 
 dist work:
 	mkdir -p $@
 
+.PHONY: clean
 clean:
 	rm -rf dist work
 
@@ -51,10 +56,13 @@ ios%-glyphs.txt:
 
 .PRECIOUS: work/ios%-glyphs-available.txt work/android%-glyphs-available.txt
 
+.PHONY: available
 available: $(available_glyphs)
 
+.PHONY: iosGlyphs
 iosGlyphs: $(ios_versions:%=work/ios%-glyphs.txt)
 
+.PHONY: tarballs
 tarballs: $(tarballs)
 
 empty :=
@@ -66,6 +74,7 @@ curl -T "{$(subst $(space),$(delim),$1)}" \
 	https://api.bintray.com/content/$$BINTRAY_USER/generic/CodePointCoverage/$(bintray_version)/$(bintray_version)/$2/
 endef
 
+.PHONY: publish
 publish: $(tarballs) $(distfiles)
 	$(call BINTRAY_PUSH,$(tarballs),work)
 	$(call BINTRAY_PUSH,$(distfiles),dist)
