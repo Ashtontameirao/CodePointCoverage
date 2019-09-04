@@ -24,27 +24,34 @@ android ?= $(android_latest)
 combo = ios$(ios)-android$(android)
 
 .PHONY: default
+default: ## Generate regex, codepoints for latest iOS and Android versions
 default: regex codepoints
 
 .PHONY: regex
+regex: ## Generate regex for latest iOS and Android versions
 regex: dist/$(combo)-common-regex.txt dist/$(combo)-common-codepoints.txt
 
 .PHONY: codepoints
+codepoints: ## Generate codepoints for latest iOS and Android versions
 codepoints: dist/$(combo)-common-codepoints.txt dist/$(combo)-common-codepoints.txt
 
 .PHONY: all
+all: ## Generate regex and codepoints for all OS combinations
 all: allRegex allCodepoints
 
 .PHONY: allRegex
+allRegex: ## Generate regex for all OS combinations
 allRegex: $(all_regex)
 
 .PHONY: allCodepoints
+allCodepoints: ## Generate codepoints for all OS combinations
 allCodepoints: $(all_codepoints)
 
 dist work:
 	mkdir -p $@
 
 .PHONY: clean
+clean: ## Clean temporary files
 clean:
 	rm -rf dist work
 
@@ -57,12 +64,15 @@ ios%-glyphs.txt:
 .PRECIOUS: work/ios%-glyphs-available.txt work/android%-glyphs-available.txt
 
 .PHONY: available
+available: ## Generate list of present glyphs for the current iOS version
 available: $(available_glyphs)
 
 .PHONY: iosGlyphs
+iosGlyphs: ## Get full list of glyphs for the current iOS version
 iosGlyphs: $(ios_versions:%=work/ios%-glyphs.txt)
 
 .PHONY: tarballs
+tarballs: ## Generate tarballs of iOS glyphs files for Bintray caching
 tarballs: $(tarballs)
 
 empty :=
@@ -75,6 +85,7 @@ curl -T "{$(subst $(space),$(delim),$1)}" \
 endef
 
 .PHONY: publish
+publish: ## Publish tarballs and distfiles to Bintray
 publish: $(tarballs) $(distfiles)
 	$(call BINTRAY_PUSH,$(tarballs),work)
 	$(call BINTRAY_PUSH,$(distfiles),dist)
@@ -109,3 +120,11 @@ dist/ios%-android$1-common-regex.txt: dist/ios%-android$1-common-codepoints.txt 
 endef
 
 $(foreach av,$(android_versions),$(eval $(call GEN_REGEX,$(av))))
+
+.PHONY: help
+help: ## Show this help text
+	$(info usage: make [target])
+	$(info )
+	$(info Available targets:)
+	@awk -F ':.*?## *' '/^[^\t].+?:.*?##/ \
+         {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
