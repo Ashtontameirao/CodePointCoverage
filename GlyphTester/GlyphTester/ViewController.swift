@@ -38,6 +38,7 @@ class ViewController: UIViewController {
                 self.progressBar.isHidden = true
                 self.goButton.isEnabled = true
                 let controller = UIActivityViewController(activityItems: [outfile], applicationActivities: nil)
+                controller.popoverPresentationController?.sourceView = self.goButton
                 self.present(controller, animated: true, completion: nil)
             }
         }
