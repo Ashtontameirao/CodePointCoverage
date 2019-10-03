@@ -119,6 +119,12 @@ $(foreach _,$(android_versions),$(eval $(call GEN_GLYPHS,$(_))))
 %-regex.txt: %-glyphs-available.txt | .env
 	< $(^) .env/bin/python codepoints2regex.py > $(@)
 
+%-regex.js.txt: %-glyphs-available.txt | .env
+	< $(^) .env/bin/python codepoints2regex.py js > $(@)
+
+.PHONY: js
+js: ## Generate JavaScript regex
+js: $(single_regex:.txt=.js.txt)
 
 .PHONY: help
 help: ## Show this help text
