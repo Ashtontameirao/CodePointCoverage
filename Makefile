@@ -57,7 +57,7 @@ clean: ## Clean temporary files
 clean:
 	rm -rf dist work
 
-ios%-glyphs.txt:
+$(ios_versions:%=work/%-glyphs.txt):
 	mkdir -p $(@D)
 	cd $(@D); curl -sL \
 		https://dl.bintray.com/amake/generic/$(bintray_version)/work/$(@F).tar.gz | \
