@@ -50,7 +50,7 @@ allCodepoints: ## Generate codepoints for all OS combinations
 allCodepoints: $(all_codepoints)
 
 dist work:
-	mkdir -p $@
+	mkdir -p $(@)
 
 .PHONY: clean
 clean: ## Clean temporary files
@@ -81,9 +81,9 @@ empty :=
 space := $(empty) $(empty)
 delim := ,
 define BINTRAY_PUSH
-curl -T "{$(subst $(space),$(delim),$1)}" \
+curl -T "{$(subst $(space),$(delim),$(1))}" \
 	-u$$BINTRAY_USER:$$BINTRAY_KEY \
-	https://api.bintray.com/content/$$BINTRAY_USER/generic/CodePointCoverage/$(bintray_version)/$(bintray_version)/$2/
+	https://api.bintray.com/content/$$BINTRAY_USER/generic/CodePointCoverage/$(bintray_version)/$(bintray_version)/$(2)/
 endef
 
 .PHONY: publish
@@ -95,11 +95,11 @@ publish: $(tarballs) $(distfiles)
 work/%.tar.gz: work/%
 	cd $(@D); tar zcvf $(@F) $(^F)
 
-work/ios%-glyphs-available.txt: work/ios%-glyphs.txt
-	grep -vE "lastresort(template|privateplane16|privateuse)|\(failed to get glyph name\)" $^ > $@
+ios%-glyphs-available.txt: ios%-glyphs.txt
+	grep -vE "lastresort(template|privateplane16|privateuse)|\(failed to get glyph name\)" $(^) > $(@)
 
-work/android%-glyphs-available.txt: | $(ANDROID_HOME)/platforms/android-% .env
-	.env/bin/python list-ttf-chars.py $(firstword $|)/data/fonts/*.ttf > $@
+android%-glyphs-available.txt: | $(ANDROID_HOME)/platforms/android-% .env
+	.env/bin/python list-ttf-chars.py $(firstword $(|))/data/fonts/*.ttf > $(@)
 
 .env:
 	virtualenv .env
@@ -114,7 +114,7 @@ dist/%-$(1)-common-codepoints.txt: work/%-glyphs-available.txt \
 		uniq -d > $$(@)
 endef
 
-$(foreach av,$(android_versions),$(eval $(call GEN_CODEPOINTS,$(av))))
+$(foreach _,$(android_versions),$(eval $(call GEN_CODEPOINTS,$(_))))
 
 define GEN_REGEX
 dist/%-$(1)-common-regex.txt: dist/%-$(1)-common-codepoints.txt | dist .env
