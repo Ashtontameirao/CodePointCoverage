@@ -12,42 +12,42 @@ ifneq ($(wildcard .bintray),)
 	export
 endif
 
-combo_regex := $(combos:%=dist/%-common-regex.txt)
-single_regex := $(all_versions:%=dist/%-regex.txt)
+combo_regex := $(combos:%=work/%-common-regex.txt)
+single_regex := $(all_versions:%=work/%-regex.txt)
 all_regex := $(combo_regex) $(single_regex)
-all_codepoints := $(combos:%=dist/%-common-codepoints.txt)
+all_glyphs := $(combos:%=work/%-common-glyphs.txt)
 raw_glyphs := $(ios_versions:%=work/%-glyphs.txt)
 available_glyphs := $(all_versions:%=work/%-glyphs-available.txt)
 tarballs := $(available_glyphs:%=%.tar.gz) $(raw_glyphs:%=%.tar.gz)
-distfiles := $(all_regex) $(all_codepoints)
+distfiles := $(all_regex) $(all_glyphs)
 
 ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo := $(ios)-$(android)
 
 .PHONY: default
-default: ## Generate regex, codepoints for latest iOS and Android versions
-default: regex codepoints
+default: ## Generate regex, glyphs for latest iOS and Android versions
+default: regex glyphs
 
 .PHONY: regex
 regex: ## Generate regex for latest iOS and Android versions
-regex: dist/$(combo)-common-regex.txt dist/$(combo)-common-codepoints.txt
+regex: work/$(combo)-common-regex.txt
 
-.PHONY: codepoints
-codepoints: ## Generate codepoints for latest iOS and Android versions
-codepoints: dist/$(combo)-common-codepoints.txt dist/$(combo)-common-codepoints.txt
+.PHONY: glyphs
+glyphs: ## Generate glyphs for latest iOS and Android versions
+glyphs: work/$(combo)-common-glyphs.txt
 
 .PHONY: all
-all: ## Generate regex and codepoints for all OS combinations
-all: allRegex allCodepoints
+all: ## Generate regex and glyphs for all OS combinations
+all: allRegex allGlyphs
 
 .PHONY: allRegex
 allRegex: ## Generate regex for all OS combinations
 allRegex: $(all_regex)
 
-.PHONY: allCodepoints
-allCodepoints: ## Generate codepoints for all OS combinations
-allCodepoints: $(all_codepoints)
+.PHONY: allGlyphs
+allGlyphs: ## Generate glyphs for all OS combinations
+allGlyphs: $(all_glyphs)
 
 dist work:
 	mkdir -p $(@)
@@ -105,23 +105,20 @@ android%-glyphs-available.txt: | $(ANDROID_HOME)/platforms/android-% .env
 	virtualenv .env
 	.env/bin/pip install FontTools
 
-define GEN_CODEPOINTS
-dist/%-$(1)-common-codepoints.txt: work/%-glyphs-available.txt \
-	work/$(1)-glyphs-available.txt | dist .env
+define GEN_GLYPHS
+%-$(1)-common-glyphs.txt: %-glyphs-available.txt \
+	$(1)-glyphs-available.txt | dist .env
 	cat $$(^) | \
 		cut -d ' ' -f 1 | \
 		sort | \
 		uniq -d > $$(@)
 endef
 
-$(foreach _,$(android_versions),$(eval $(call GEN_CODEPOINTS,$(_))))
+$(foreach _,$(android_versions),$(eval $(call GEN_GLYPHS,$(_))))
 
-define GEN_REGEX
-dist/%-$(1)-common-regex.txt: dist/%-$(1)-common-codepoints.txt | dist .env
-	< $$^ .env/bin/python codepoints2regex.py > $$@
-endef
+%-regex.txt: %-glyphs-available.txt | .env
+	< $(^) .env/bin/python codepoints2regex.py > $(@)
 
-$(foreach av,$(android_versions),$(eval $(call GEN_REGEX,$(av))))
 
 .PHONY: help
 help: ## Show this help text
