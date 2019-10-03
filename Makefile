@@ -13,7 +13,8 @@ ifneq ($(wildcard .bintray),)
 endif
 
 combo_regex := $(combos:%=dist/%-common-regex.txt)
-all_regex := $(combo_regex)
+single_regex := $(all_versions:%=dist/%-regex.txt)
+all_regex := $(combo_regex) $(single_regex)
 all_codepoints := $(combos:%=dist/%-common-codepoints.txt)
 raw_glyphs := $(ios_versions:%=work/%-glyphs.txt)
 available_glyphs := $(all_versions:%=work/%-glyphs-available.txt)
