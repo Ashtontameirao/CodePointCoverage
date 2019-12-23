@@ -9,14 +9,21 @@ Requires FontTools: https://pypi.python.org/pypi/FontTools
 
 import sys
 
-from fontTools.ttLib import TTFont
-from fontTools.unicode import Unicode
+from fontTools.ttLib import TTFont, TTCollection
 
 chars = {}
 for f in sys.argv[1:]:
-    for table in TTFont(f)['cmap'].tables:
-        chars.update(table.cmap)
+    try:
+        if f.endswith('.ttc'):
+            fonts = TTCollection(f)
+        else:
+            fonts = [TTFont(f)]
+        for font in fonts:
+            for table in font['cmap'].tables:
+                chars.update(table.cmap)
+    except:
+        print('Could not process arg:', f, file=sys.stderr)
+        raise
 
-print('\n'.join(['U+%06x %s' % (c, desc)
-                 for c, desc in sorted(chars.items())]))
-
+for c, desc in sorted(chars.items()):
+    print('U+%06x %s' % (c, desc))
