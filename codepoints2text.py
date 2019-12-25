@@ -14,6 +14,9 @@ for line in sys.stdin:
         out = char.encode('utf-8')
     except NameError:
         out = chr(n)
-    sys.stdout.write(out)
+    try:
+        sys.stdout.write(out)
+    except UnicodeEncodeError as e:
+        sys.stderr.write('\n' + str(e) + '\n')
 
 print
