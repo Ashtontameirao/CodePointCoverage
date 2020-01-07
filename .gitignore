@@ -1,4 +1,4 @@
 /dist
-/work
+/vendor
 .env
-/.bintray
+*.pyc

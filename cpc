@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function diff() {
-    f1=work/$1-glyphs-available.txt
-    f2=work/$2-glyphs-available.txt
+    f1=data/$1-glyphs.txt.gz
+    f2=data/$2-glyphs.txt.gz
     make -s $f1 $f2
-    cat $f1 $f2 | cut -d ' ' -f 1 | sort | uniq -u
+    gzcat $f1 $f2 | cut -d ' ' -f 1 | sort | uniq -u
 }
 
 function diffText() {
@@ -12,7 +12,6 @@ function diffText() {
 }
 
 function available() {
-    make -s available
     codepoints=$(echo $1 | python text2codepoints.py)
     result=$(_availableImpl $(echo a | python text2codepoints.py))
     for cp in $codepoints; do
@@ -23,7 +22,7 @@ function available() {
 }
 
 function _availableImpl() {
-    for f in $(grep -l $1 work/*-available.txt); do
+    for f in $(zgrep -l $1 data/*-glyphs.txt.gz); do
         f=${f##*/}
         f=${f%%-*}
         echo $f

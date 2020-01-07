@@ -1,130 +1,167 @@
-ios_versions := $(addprefix ios,8.1 8.2 8.3 8.4 9.0 9.1 9.2 9.3 10.0 10.1 10.2 10.3 11.0 11.1 11.2 11.3 11.4 12.0 12.1 12.2 12.3 12.4 13.0 13.1 13.2 13.3)
+SHELL := /bin/bash
+
+ios_versions := $(addprefix ios,8.0 8.1 8.2 8.3 8.4 9.0 9.1 9.2 9.3 10.0 10.1 10.2 10.3 11.0 11.1 11.2 11.3 11.4 12.0 12.1 12.2 12.4 13.0 13.1 13.2 13.3)
 ios_latest := $(lastword $(ios_versions))
-android_versions := $(addprefix android,2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29)
+android_versions := $(addprefix android,10 15 16 17 18 19 21 22 23 24 25 26 27 28 29)
 all_versions := $(ios_versions) $(android_versions)
 android_latest := $(lastword $(android_versions))
-combos := $(foreach _,$(android_versions),$(addsuffix -$(_),$(ios_versions)))
-combo_latest := $(ios_latest)-$(android_latest)
-
-bintray_version := 20181031
-ifneq ($(wildcard .bintray),)
-	include .bintray
-	export
-endif
-
-combo_regex := $(combos:%=work/%-common-regex.txt)
-single_regex := $(all_versions:%=work/%-regex.txt)
-all_regex := $(combo_regex) $(single_regex)
-all_glyphs := $(combos:%=work/%-common-glyphs.txt)
-raw_glyphs := $(ios_versions:%=work/%-glyphs.txt)
-available_glyphs := $(all_versions:%=work/%-glyphs-available.txt)
-tarballs := $(available_glyphs:%=%.tar.gz) $(raw_glyphs:%=%.tar.gz)
-distfiles := $(all_regex) $(all_glyphs)
 
 ios ?= $(ios_latest)
 android ?= $(android_latest)
 combo := $(ios)-$(android)
 
-.PHONY: default
-default: ## Generate regex, glyphs for latest iOS and Android versions
-default: regex glyphs
+dist_regex_py := dist/$(combo)-common-glyphs-regex-py.txt
+dist_regex_js := $(dist_regex_py:%-py.txt=%-js.txt)
+dist_regex_dart := $(all_versions:%=dist/%.g.dart)
+dist_decimal := $(foreach _,$(all_versions),dist/$(_)-glyphs-decimal.txt)
+dist_decimal_diff := dist/ios-common-glyphs-decimal.txt dist/android-common-glyphs-decimal.txt $(dist_decimal:-decimal.txt=-diff-decimal.txt)
 
 .PHONY: regex
 regex: ## Generate regex for latest iOS and Android versions
-regex: work/$(combo)-common-regex.txt
+regex: $(dist_regex_py) $(dist_regex_js)
 
-.PHONY: glyphs
-glyphs: ## Generate glyphs for latest iOS and Android versions
-glyphs: work/$(combo)-common-glyphs.txt
+.PHONY: decimal
+decimal: ## Generate glyphs for all platforms in decimal format
+decimal: $(dist_decimal)
 
-.PHONY: all
-all: ## Generate regex and glyphs for all OS combinations
-all: allRegex allGlyphs
+.PHONY: dart
+dart: ## Generate Dart regex for all platforms
+dart: $(dist_regex_dart)
 
-.PHONY: allRegex
-allRegex: ## Generate regex for all OS combinations
-allRegex: $(all_regex)
+.PHONY: decimal-diff
+decimal-diff: ## Generate glyph diffs in decimal format
+decimal-diff: $(dist_decimal_diff)
 
-.PHONY: allGlyphs
-allGlyphs: ## Generate glyphs for all OS combinations
-allGlyphs: $(all_glyphs)
+# Generate in /data but move to /dist
+dist/%: data/% | dist
+	mv $(<) $(@)
 
-dist work:
+dist:
 	mkdir -p $(@)
 
 .PHONY: clean
 clean: ## Clean temporary files
 clean:
-	rm -rf dist work
-
-$(ios_versions:%=work/%-glyphs.txt):
-	mkdir -p $(@D)
-	cd $(@D); curl -sL \
-		https://dl.bintray.com/amake/generic/$(bintray_version)/work/$(@F).tar.gz | \
-		tar xvz > $(@F)
-
-.PRECIOUS: work/%-glyphs-available.txt
-
-.PHONY: available
-available: ## Generate list of present glyphs for the current iOS version
-available: $(available_glyphs)
-
-.PHONY: iosGlyphs
-iosGlyphs: ## Get full list of glyphs for the current iOS version
-iosGlyphs: $(ios_versions:%=work/%-glyphs.txt)
-
-.PHONY: tarballs
-tarballs: ## Generate tarballs of iOS glyphs files for Bintray caching
-tarballs: $(tarballs)
-
-empty :=
-space := $(empty) $(empty)
-delim := ,
-define BINTRAY_PUSH
-curl -T "{$(subst $(space),$(delim),$(1))}" \
-	-u$$BINTRAY_USER:$$BINTRAY_KEY \
-	https://api.bintray.com/content/$$BINTRAY_USER/generic/CodePointCoverage/$(bintray_version)/$(bintray_version)/$(2)/
-endef
-
-.PHONY: publish
-publish: ## Publish tarballs and distfiles to Bintray
-publish: $(tarballs) $(distfiles)
-	$(call BINTRAY_PUSH,$(tarballs),work)
-	$(call BINTRAY_PUSH,$(distfiles),dist)
-
-work/%.tar.gz: work/%
-	cd $(@D); tar zcvf $(@F) $(^F)
-
-ios%-glyphs-available.txt: ios%-glyphs.txt
-	grep -vE "lastresort(template|privateplane16|privateuse)|\(failed to get glyph name\)" $(^) > $(@)
-
-android%-glyphs-available.txt: | $(ANDROID_HOME)/platforms/android-% .env
-	.env/bin/python list-ttf-chars.py $(firstword $(|))/data/fonts/*.ttf > $(@)
+	rm -rf dist
 
 .env:
-	virtualenv .env
-	.env/bin/pip install FontTools
+	virtualenv $(@)
+	$(@)/bin/pip install FontTools
 
-define GEN_GLYPHS
-%-$(1)-common-glyphs.txt: %-glyphs-available.txt \
-	$(1)-glyphs-available.txt | dist .env
-	cat $$(^) | \
-		cut -d ' ' -f 1 | \
-		sort | \
-		uniq -d > $$(@)
-endef
 
-$(foreach _,$(android_versions),$(eval $(call GEN_GLYPHS,$(_))))
+### Data munging recipes
 
-%-regex.txt: %-glyphs-available.txt | .env
-	< $(^) .env/bin/python codepoints2regex.py > $(@)
+gzintersection = comm -12 <(gzcat $(<)) <(gzcat $(word 2,$(^))) \
+	$(foreach _,$(wordlist 2,$(words $(^)),$(^)), | comm -12 - <(gzcat $(_))) | gzip
 
-%-regex.js.txt: %-glyphs-available.txt | .env
-	< $(^) .env/bin/python codepoints2regex.py js > $(@)
 
-.PHONY: js
-js: ## Generate JavaScript regex
-js: $(single_regex:.txt=.js.txt)
+data/$(combo)-common-glyphs.txt.gz: data/$(ios)-glyphs.txt.gz data/$(android)-glyphs.txt.gz
+	$(gzintersection) >$(@)
+
+data/ios-common-glyphs.txt.gz: $(ios_versions:%=data/%-glyphs.txt.gz)
+	$(gzintersection) >$(@)
+
+data/android-common-glyphs.txt.gz: $(android_versions:%=data/%-glyphs.txt.gz)
+	$(gzintersection) >$(@)
+
+gzdiff = gzcat $(^) \
+	| cut -d ' ' -f 1 \
+	| sort \
+	| uniq -u \
+	| gzip
+
+data/ios%-glyphs-diff.txt.gz: data/ios-common-glyphs.txt.gz data/ios%-glyphs.txt.gz
+	$(gzdiff) >$(@)
+
+data/android%-glyphs-diff.txt.gz: data/android-common-glyphs.txt.gz data/android%-glyphs.txt.gz
+	$(gzdiff) >$(@)
+
+%-decimal.txt: %.txt.gz
+	gzcat $(^) \
+		| cut -d ' ' -f 1 \
+		| cut -d '+' -f 2 \
+		| while read cp; do echo $$((16#$$cp)); done >$(@)
+
+%-regex-py.txt: %.txt.gz | .env
+	gzcat $(^) | .env/bin/python codepoints2regex.py > $(@)
+
+%-regex-js.txt: %.txt.gz | .env
+	gzcat $(^) | .env/bin/python codepoints2regex.py js > $(@)
+
+%.g.dart: %-glyphs-regex-js.txt
+	identifier=$$(echo $(*) | sed -E -e 's!.*/|-.*!!g;s![^a-zA-Z0-9$$]!_!g'); \
+		printf "final RegExp %sPattern = RegExp(\n  // ignore: valid_regexps\n  '%s',\n  unicode: true,\n);" $$identifier $$(cat $(<)) > $(@)
+
+### Data collection
+
+# ios%-raw.txt files are generated by the GlyphTester app on an iOS device or
+# simulator. This was the initial approach but is tricky because it's hard to
+# distinguish between an error in getting the glyph name and codepoints that are
+# supported but have no glyph.
+
+ios%-app-glyphs.txt.gz: ios%-raw.txt.gz
+	zgrep -vE "lastresort(template|privateplane16|privateuse)" $(^) | gzip > $(@)
+
+# Instead we can inspect the fonts included in the simulator runtime (minus
+# LastResort) for a more accurate accounting.
+#
+# iOS 8.0: Xcode 6.0.1
+# iOS 8.1: Xcode 6.1.1
+# iOS 8.2: Xcode 6.2
+# iOS 8.3: Xcode 6.3.2
+# iOS 8.4: Xcode 6.4
+# iOS 9.0: Xcode 7.0.1
+# iOS 9.1: Xcode 7.1.1
+# iOS 9.2: Xcode 7.2.1
+# iOS 9.3: Xcode 7.3.1
+# iOS 10.0: Xcode 8.0
+# iOS 10.1: Xcode 8.1
+# iOS 10.2: Xcode 8.2.1
+# iOS 10.3: Xcode 8.3.3
+# iOS 11.0: Xcode 9.0.1
+# iOS 11.1: Xcode 9.1
+# iOS 11.2: Xcode 9.2
+# iOS 11.3: Xcode 9.3.1
+# iOS 11.4: Xcode 9.4.1
+# iOS 12.0: Xcode 10.0
+# iOS 12.1: Xcode 10.1
+# iOS 12.2: Xcode 10.2.1
+# iOS 12.4: Xcode 10.3
+# iOS 13.0: Xcode 11.0
+# iOS 13.1: Xcode 11.1
+# iOS 13.2: Xcode 11.2.1
+# iOS 13.3: Xcode 11.3
+
+ios_fonts = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
+
+ios%-glyphs.txt.gz: | .env
+	find $(ios_fonts) \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) ! -name 'LastResort.*' \
+		| xargs .env/bin/python list-ttf-chars.py \
+		| gzip > $(@)
+
+# android%-glyphs.txt are generated from the files in the /fonts directory of
+# the x86 system.img for that platform version. Note that the fonts included in
+# the "Platform" package at $ANDROID_HOME/platforms/android-%/data/fonts is a
+# mere subset of the fonts found on the system.img and is notably missing
+# e.g. extended CJK coverage.
+
+data/android%-glyphs.txt.gz: vendor/android-%/fonts | .env
+	.env/bin/python list-ttf-chars.py $(<)/* | gzip > $(@)
+
+vendor/android-%/fonts: $(ANDROID_HOME)/system-images/android-%/default/x86/system.img
+	if [ ! -d $(@) ]; then ext4fuse $(<) $(@D); fi
+
+# Mounting system.img as ext4 only works for up to SDK 25. SDK 26 and later are
+# a different format that I can't figure out how to mount. Instead launch an AVD
+# and do `make avd-fonts` to dump the fonts.
+
+avd_sdk_version = $(shell adb shell getprop ro.build.version.sdk)
+
+.PHONY: avd-fonts
+avd-fonts: ## Dump fonts from a running Android Virtual Device
+avd-fonts:
+	mkdir -p vendor/android-$(avd_sdk_version)
+	adb pull /system/fonts vendor/android-$(avd_sdk_version)/fonts
 
 .PHONY: help
 help: ## Show this help text
