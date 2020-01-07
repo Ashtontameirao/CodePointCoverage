@@ -5,11 +5,27 @@
 
 import sys
 
+is_javascript = 'js' in sys.argv
+
+
+def is_surrogate(codepoint):
+    return 0xd800 <= codepoint and codepoint <= 0xdfff
+
+
 ranges = []
 
 for line in sys.stdin:
     _, hx = line.strip().split(maxsplit=1)[0].split('+')
     n = int(hx, base=16)
+    if is_javascript and is_surrogate(n):
+        # Including surrogates gives false matches with JavaScript. A minimal
+        # case is:
+        #
+        # /^[\udba1-\udbfe\udca1]$/u.test('\udc00') => true
+        #
+        # You would expect false, but \udbfe\udca1 is interpreted as \u{10f8a1}
+        # so a much greater range is mistakenly covered.
+        continue
     start, end = ranges[-1] if ranges else (None, None)
     if n - 1 == end:
         ranges[-1] = (start, n)
@@ -17,8 +33,6 @@ for line in sys.stdin:
         ranges.append((n, n))
 
 regex_ranges = []
-
-is_javascript = 'js' in sys.argv
 
 # astral?
 templates = ({True: r'\u{%x}', False: r'\u%04x'} if is_javascript
