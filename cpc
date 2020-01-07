@@ -32,7 +32,7 @@ function _availableImpl() {
 
 if [ -z "$1" ]; then
     cat <<EOF
-Usage: $(basename $0) COMMAND [ARGS...]
+Usage: $(basename "$0") COMMAND [ARGS...]
 
 Commands:
     diff PLATFORM1 PLATFORM2
