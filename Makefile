@@ -14,7 +14,6 @@ dist_regex_py := dist/$(combo)-common-glyphs-regex-py.txt
 dist_regex_js := $(dist_regex_py:%-py.txt=%-js.txt)
 dist_regex_dart := $(all_versions:%=dist/%.g.dart)
 dist_decimal := $(foreach _,$(all_versions),dist/$(_)-glyphs-decimal.txt)
-dist_decimal_diff := dist/ios-common-glyphs-decimal.txt dist/android-common-glyphs-decimal.txt $(dist_decimal:-decimal.txt=-diff-decimal.txt)
 
 .PHONY: regex
 regex: ## Generate regex for latest iOS and Android versions
@@ -27,10 +26,6 @@ decimal: $(dist_decimal)
 .PHONY: dart
 dart: ## Generate Dart regex for all platforms
 dart: $(dist_regex_dart)
-
-.PHONY: decimal-diff
-decimal-diff: ## Generate glyph diffs in decimal format
-decimal-diff: $(dist_decimal_diff)
 
 # Generate in /data but move to /dist
 dist/%: data/% | dist
@@ -57,24 +52,6 @@ gzintersection = comm -12 <(gzcat $(<)) <(gzcat $(word 2,$(^))) \
 
 data/$(combo)-common-glyphs.txt.gz: data/$(ios)-glyphs.txt.gz data/$(android)-glyphs.txt.gz
 	$(gzintersection) >$(@)
-
-data/ios-common-glyphs.txt.gz: $(ios_versions:%=data/%-glyphs.txt.gz)
-	$(gzintersection) >$(@)
-
-data/android-common-glyphs.txt.gz: $(android_versions:%=data/%-glyphs.txt.gz)
-	$(gzintersection) >$(@)
-
-gzdiff = gzcat $(^) \
-	| cut -d ' ' -f 1 \
-	| sort \
-	| uniq -u \
-	| gzip
-
-data/ios%-glyphs-diff.txt.gz: data/ios-common-glyphs.txt.gz data/ios%-glyphs.txt.gz
-	$(gzdiff) >$(@)
-
-data/android%-glyphs-diff.txt.gz: data/android-common-glyphs.txt.gz data/android%-glyphs.txt.gz
-	$(gzdiff) >$(@)
 
 %-decimal.txt: %.txt.gz
 	gzcat $(^) \
