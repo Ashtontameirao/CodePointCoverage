@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function diff() {
-    f1=data/$1-glyphs.txt.gz
-    f2=data/$2-glyphs.txt.gz
+    f1=data/$1-glyphs.txt
+    f2=data/$2-glyphs.txt
     make -s $f1 $f2
-    gzcat $f1 $f2 | cut -d ' ' -f 1 | sort | uniq -u
+    cat $f1 $f2 | cut -d ' ' -f 1 | sort | uniq -u
 }
 
 function diffText() {
@@ -22,7 +22,7 @@ function available() {
 }
 
 function _availableImpl() {
-    for f in $(zgrep -l $1 data/*-glyphs.txt.gz); do
+    for f in $(grep -l $1 data/*-glyphs.txt); do
         f=${f##*/}
         f=${f%%-*}
         echo $f
