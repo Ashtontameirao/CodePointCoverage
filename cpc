@@ -36,10 +36,10 @@ Usage: $(basename "$0") COMMAND [ARGS...]
 
 Commands:
     diff PLATFORM1 PLATFORM2
-         List codepoints available in just one of the specified platforms, in
+         List glyphs available in just one of the specified platforms, in
          U+xxxxxx format
     diffText PLATFORM1 PLATFORM2
-         List codepoints available in just one of the specified platforms, as
+         List glyphs available in just one of the specified platforms, as
          plain text
     available TEXT
          List the platforms on which all codepoints in the specified text are
