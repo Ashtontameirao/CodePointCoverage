@@ -58,6 +58,11 @@ Commands:
          available
 ```
 
+## Other Applications
+
+[Is It Tofu?](https://tofu.mobi) is a web app based on this data that analyzes a
+block of text and shows compatibility information for iOS and Android.
+
 # License
 
 MIT
