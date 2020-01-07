@@ -46,24 +46,23 @@ clean:
 
 ### Data munging recipes
 
-gzintersection = comm -12 <(gzcat $(<)) <(gzcat $(word 2,$(^))) \
-	$(foreach _,$(wordlist 2,$(words $(^)),$(^)), | comm -12 - <(gzcat $(_))) | gzip
+intersection = comm -12 $(<) $(word 2,$(^)) \
+	$(foreach _,$(wordlist 2,$(words $(^)),$(^)), | comm -12 - $(_))
 
+data/$(combo)-common-glyphs.txt: data/$(ios)-glyphs.txt data/$(android)-glyphs.txt
+	$(intersection) >$(@)
 
-data/$(combo)-common-glyphs.txt.gz: data/$(ios)-glyphs.txt.gz data/$(android)-glyphs.txt.gz
-	$(gzintersection) >$(@)
-
-%-decimal.txt: %.txt.gz
-	gzcat $(^) \
+%-decimal.txt: %.txt
+	cat $(^) \
 		| cut -d ' ' -f 1 \
 		| cut -d '+' -f 2 \
 		| while read cp; do echo $$((16#$$cp)); done >$(@)
 
-%-regex-py.txt: %.txt.gz | .env
-	gzcat $(^) | .env/bin/python codepoints2regex.py > $(@)
+%-regex-py.txt: %.txt | .env
+	cat $(^) | .env/bin/python codepoints2regex.py > $(@)
 
-%-regex-js.txt: %.txt.gz | .env
-	gzcat $(^) | .env/bin/python codepoints2regex.py js > $(@)
+%-regex-js.txt: %.txt | .env
+	cat $(^) | .env/bin/python codepoints2regex.py js > $(@)
 
 %.g.dart: %-glyphs-regex-js.txt
 	identifier=$$(echo $(*) | sed -E -e 's!.*/|-.*!!g;s![^a-zA-Z0-9$$]!_!g'); \
@@ -76,8 +75,8 @@ data/$(combo)-common-glyphs.txt.gz: data/$(ios)-glyphs.txt.gz data/$(android)-gl
 # distinguish between an error in getting the glyph name and codepoints that are
 # supported but have no glyph.
 
-ios%-app-glyphs.txt.gz: ios%-raw.txt.gz
-	zgrep -vE "lastresort(template|privateplane16|privateuse)" $(^) | gzip > $(@)
+ios%-app-glyphs.txt: ios%-raw.txt
+	grep -vE "lastresort(template|privateplane16|privateuse)" $(^) >$(@)
 
 # Instead we can inspect the fonts included in the simulator runtime (minus
 # LastResort) for a more accurate accounting.
@@ -111,10 +110,9 @@ ios%-app-glyphs.txt.gz: ios%-raw.txt.gz
 
 ios_fonts = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
 
-ios%-glyphs.txt.gz: | .env
+ios%-glyphs.txt: | .env
 	find $(ios_fonts) \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) ! -name 'LastResort.*' \
-		| xargs .env/bin/python list-ttf-chars.py \
-		| gzip > $(@)
+		| xargs .env/bin/python list-ttf-chars.py >$(@)
 
 # android%-glyphs.txt are generated from the files in the /fonts directory of
 # the x86 system.img for that platform version. Note that the fonts included in
@@ -122,8 +120,8 @@ ios%-glyphs.txt.gz: | .env
 # mere subset of the fonts found on the system.img and is notably missing
 # e.g. extended CJK coverage.
 
-data/android%-glyphs.txt.gz: vendor/android-%/fonts | .env
-	.env/bin/python list-ttf-chars.py $(<)/* | gzip > $(@)
+data/android%-glyphs.txt: vendor/android-%/fonts | .env
+	.env/bin/python list-ttf-chars.py $(<)/* >$(@)
 
 vendor/android-%/fonts: $(ANDROID_HOME)/system-images/android-%/default/x86/system.img
 	if [ ! -d $(@) ]; then ext4fuse $(<) $(@D); fi
