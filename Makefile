@@ -79,34 +79,41 @@ ios%-app-glyphs.txt: ios%-raw.txt
 	grep -vE "lastresort(template|privateplane16|privateuse)" $(^) >$(@)
 
 # Instead we can inspect the fonts included in the simulator runtime (minus
-# LastResort) for a more accurate accounting.
+# LastResort) for a more accurate accounting. Xcode versions, iOS versions, and
+# simulator runtime font locations are as follows:
 #
-# iOS 8.0: Xcode 6.0.1
-# iOS 8.1: Xcode 6.1.1
-# iOS 8.2: Xcode 6.2
-# iOS 8.3: Xcode 6.3.2
-# iOS 8.4: Xcode 6.4
-# iOS 9.0: Xcode 7.0.1
-# iOS 9.1: Xcode 7.1.1
-# iOS 9.2: Xcode 7.2.1
-# iOS 9.3: Xcode 7.3.1
-# iOS 10.0: Xcode 8.0
-# iOS 10.1: Xcode 8.1
-# iOS 10.2: Xcode 8.2.1
-# iOS 10.3: Xcode 8.3.3
-# iOS 11.0: Xcode 9.0.1
-# iOS 11.1: Xcode 9.1
-# iOS 11.2: Xcode 9.2
-# iOS 11.3: Xcode 9.3.1
-# iOS 11.4: Xcode 9.4.1
-# iOS 12.0: Xcode 10.0
-# iOS 12.1: Xcode 10.1
-# iOS 12.2: Xcode 10.2.1
-# iOS 12.4: Xcode 10.3
-# iOS 13.0: Xcode 11.0
-# iOS 13.1: Xcode 11.1
-# iOS 13.2: Xcode 11.2.1
-# iOS 13.3: Xcode 11.3
+# case
+#  iOS 8.0: Xcode 6.0.1
+#  iOS 8.1: Xcode 6.1.1
+#  iOS 8.2: Xcode 6.2
+#  iOS 8.3: Xcode 6.3.2
+#  iOS 8.4: Xcode 6.4
+#  iOS 9.0: Xcode 7.0.1
+#  iOS 9.1: Xcode 7.1.1
+#  iOS 9.2: Xcode 7.2.1
+#  iOS 9.3: Xcode 7.3.1
+#  iOS 10.0: Xcode 8.0
+#  iOS 10.1: Xcode 8.1
+#  iOS 10.2: Xcode 8.2.1
+#  iOS 10.3: Xcode 8.3.3
+#   Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Fonts
+# case
+#  iOS 11.0: Xcode 9.0.1
+#  iOS 11.1: Xcode 9.1
+#  iOS 11.2: Xcode 9.2
+#  iOS 11.3: Xcode 9.3.1
+#  iOS 11.4: Xcode 9.4.1
+#  iOS 12.0: Xcode 10.0
+#  iOS 12.1: Xcode 10.1
+#  iOS 12.2: Xcode 10.2.1
+#  iOS 12.4: Xcode 10.3
+#   Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
+# case
+#  iOS 13.0: Xcode 11.0
+#  iOS 13.1: Xcode 11.1
+#  iOS 13.2: Xcode 11.2.1
+#  iOS 13.3: Xcode 11.3
+#   Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
 
 ios_fonts = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
 
