@@ -111,8 +111,9 @@ ios%-app-glyphs.txt: ios%-raw.txt
 ios_fonts = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
 
 ios%-glyphs.txt: | .env
-	find $(ios_fonts) \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) ! -name 'LastResort.*' \
-		| xargs .env/bin/python list-ttf-chars.py >$(@)
+	find "$(ios_fonts)" \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) \
+		! -name 'LastResort.*' -print0 \
+			| xargs -0 .env/bin/python list-ttf-chars.py >$(@)
 
 # android%-glyphs.txt are generated from the files in the /fonts directory of
 # the x86 system.img for that platform version. Note that the fonts included in
