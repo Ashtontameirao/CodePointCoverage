@@ -19,8 +19,14 @@ for f in sys.argv[1:]:
         else:
             fonts = [TTFont(f)]
         for font in fonts:
-            for table in font['cmap'].tables:
-                chars.update(table.cmap)
+            bestTable = font.getBestCmap()
+            if bestTable is not None:
+                chars.update(bestTable)
+            else:
+                print('Warning: Font does not have a Unicode cmap:',
+                      f, file=sys.stderr)
+                for table in font['cmap'].tables:
+                    chars.update(table.cmap)
     except:
         print('Could not process arg:', f, file=sys.stderr)
         raise
