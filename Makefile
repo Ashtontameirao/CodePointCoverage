@@ -46,8 +46,8 @@ clean:
 
 ### Data munging recipes
 
-intersection = comm -12 $(<) $(word 2,$(^)) \
-	$(foreach _,$(wordlist 2,$(words $(^)),$(^)), | comm -12 - $(_))
+intersection = comm -12 <(cut -d ' ' -f 1 $(<)) <(cut -d ' ' -f 1 $(word 2,$(^))) \
+	$(foreach _,$(wordlist 3,$(words $(^)),$(^)), | comm -12 - <(cut -d ' ' -f 1 $(_)))
 
 data/$(combo)-common-glyphs.txt: data/$(ios)-glyphs.txt data/$(android)-glyphs.txt
 	$(intersection) >$(@)
