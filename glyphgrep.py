@@ -15,7 +15,9 @@ def find_glyph(path, glyph):
         def _inspect():
             for table in font['cmap'].tables:
                 if glyph in table.cmap:
-                    return (n, table.cmap[glyph])
+                    return (n,
+                            (table.platformID, table.platEncID),
+                            table.cmap[glyph])
         result = _inspect()
         if result is not None:
             yield result
@@ -56,11 +58,13 @@ def main():
             to_scan.append(path)
 
     for path in to_scan:
-        for font_num, description in find_glyph(path, args.codepoint):
+        for font_num, flavor, description in find_glyph(path, args.codepoint):
+            flavor_txt = f'platformID {flavor[0]}; platEncId {flavor[1]}'
             if path.suffix == '.ttc':
-                print(f'{path} (font {font_num}): {description}')
+                print(f'{path} (font {font_num}; {flavor_txt}):',
+                      '{description}')
             else:
-                print(f'{path}: {description}')
+                print(f'{path} ({flavor_txt}): {description}')
 
 
 if __name__ == '__main__':
