@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-ios_versions := $(addprefix ios,8.0 8.1 8.2 8.3 8.4 9.0 9.1 9.2 9.3 10.0 10.1 10.2 10.3 11.0 11.1 11.2 11.3 11.4 12.0 12.1 12.2 12.4 13.0 13.1 13.2 13.3 13.4)
+ios_versions := $(addprefix ios,8.0 8.1 8.2 8.3 8.4 9.0 9.1 9.2 9.3 10.0 10.1 10.2 10.3 11.0 11.1 11.2 11.3 11.4 12.0 12.1 12.2 12.4 13.0 13.1 13.2 13.3 13.4 13.5)
 ios_latest := $(lastword $(ios_versions))
 android_versions := $(addprefix android,10 15 16 17 18 19 21 22 23 24 25 26 27 28 29)
 all_versions := $(ios_versions) $(android_versions)
@@ -113,6 +113,8 @@ ios%-app-glyphs.txt: ios%-raw.txt
 #  iOS 13.1: Xcode 11.1
 #  iOS 13.2: Xcode 11.2.1
 #  iOS 13.3: Xcode 11.3
+#  iOS 13.4: Xcode 11.4
+#  iOS 13.5: Xcode 11.5
 #   Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
 
 ios_fonts = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
