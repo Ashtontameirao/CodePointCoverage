@@ -30,7 +30,7 @@ function _availableImpl() {
     done
 }
 
-if [ -z "$1" ]; then
+if (($# == 0)); then
     cat <<EOF
 Usage: $(basename "$0") COMMAND [ARGS...]
 
@@ -45,6 +45,7 @@ Commands:
          List the platforms on which all codepoints in the specified text are
          available
 EOF
+    exit 1
 fi
 
 cmd=$1
