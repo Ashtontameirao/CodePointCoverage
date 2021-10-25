@@ -124,11 +124,11 @@ ios%-glyphs.txt: | .env
 		! -name 'LastResort.*' -print0 \
 			| xargs -0 .env/bin/python list-ttf-chars.py >$(@)
 
-# android%-glyphs.txt are generated from the files in the /fonts directory of
-# the x86 system.img for that platform version. Note that the fonts included in
-# the "Platform" package at $ANDROID_HOME/platforms/android-%/data/fonts is a
-# mere subset of the fonts found on the system.img and is notably missing
-# e.g. extended CJK coverage.
+# Through SDK 25, android%-glyphs.txt are generated from the files in the /fonts
+# directory of the x86 system.img for that platform version. Note that the fonts
+# included in the "Platform" package at
+# $ANDROID_HOME/platforms/android-%/data/fonts is a mere subset of the fonts
+# found on the system.img and is notably missing e.g. extended CJK coverage.
 
 data/android%-glyphs.txt: vendor/android-%/fonts | .env
 	.env/bin/python list-ttf-chars.py $(<)/* >$(@)
