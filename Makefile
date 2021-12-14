@@ -118,8 +118,10 @@ ios%-app-glyphs.txt: ios%-raw.txt
 #   Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
 
 ios_fonts = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
+ios_plist = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Info.plist
 
 ios%-glyphs.txt: | .env
+	$(info Gathering codepoints for $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleName' $(ios_plist)))
 	find "$(ios_fonts)" \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) \
 		! -name 'LastResort.*' -print0 \
 			| xargs -0 .env/bin/python list-ttf-chars.py >$(@)
