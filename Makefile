@@ -43,7 +43,7 @@ clean:
 	rm -rf dist
 
 .env:
-	virtualenv $(@)
+	python3 -m venv $(@)
 	$(@)/bin/pip install FontTools
 
 
