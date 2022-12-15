@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-function diff() {
+diff() {
     local f1=data/$1-glyphs.txt
     local f2=data/$2-glyphs.txt
     echo Added
@@ -12,11 +12,11 @@ function diff() {
     comm -23 <(cut -d ' ' -f 1 "$f1") <(cut -d ' ' -f 1 "$f2")
 }
 
-function diffText() {
+diffText() {
     diff "$1" "$2" | python codepoints2text.py
 }
 
-function available() {
+available() {
     local codepoints
     codepoints=$(echo "$1" | python text2codepoints.py)
     local result
@@ -29,7 +29,7 @@ function available() {
     echo "$result" | tr ' ' '\n'
 }
 
-function _availableImpl() {
+_availableImpl() {
     local f
     grep -l "$1" data/*-glyphs.txt | while IFS= read -r f; do
         f=${f##*/}
