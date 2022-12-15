@@ -1,8 +1,8 @@
-'''
-cat a list of Unicode codepoints (one on each line, in U+XXXX
-format) to get a string of actual text
+"""
+cat a list of Unicode codepoints to get a string of actual text.
 
-'''
+Each line should be one codepoint in U+XXXX format.
+"""
 
 import sys
 

@@ -1,11 +1,11 @@
-'''
-Call this with TrueType font filename arguments to output a list of
-all Unicode characters covered by all fonts, e.g.
+"""
+Dump a list of Unicode codepoints covered by a given TrueType font.
 
-list_ttf_chars.py $ANDROID_HOME/platforms/android-XY/data/fonts/*.ttf
+e.g.
+python list-ttf-chars.py $ANDROID_HOME/platforms/android-XY/data/fonts/*.ttf
 
 Requires FontTools: https://pypi.python.org/pypi/FontTools
-'''
+"""
 
 import sys
 
@@ -27,7 +27,7 @@ for f in sys.argv[1:]:
                       f, file=sys.stderr)
                 for table in font['cmap'].tables:
                     chars.update(table.cmap)
-    except:
+    except Exception:
         print('Could not process arg:', f, file=sys.stderr)
         raise
 

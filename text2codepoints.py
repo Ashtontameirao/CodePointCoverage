@@ -1,8 +1,8 @@
-'''
-cat a string of text to get its Unicode codepoints
-(one on each line, in U+XXXX format)
+"""
+cat a string of text to get its Unicode codepoints.
 
-'''
+Output has one codepoint on each line in U+XXXX format.
+"""
 
 from __future__ import print_function
 import sys

@@ -1,4 +1,5 @@
-import sys
+"""Search font files to find those containing a particular glyph."""
+
 import re
 import argparse
 import pathlib
@@ -6,7 +7,7 @@ import pathlib
 from fontTools.ttLib import TTFont, TTCollection
 
 
-def find_glyph(path, glyph):
+def _find_glyph(path, glyph):
     if path.suffix == '.ttc':
         fonts = TTCollection(path)
     else:
@@ -23,7 +24,7 @@ def find_glyph(path, glyph):
             yield result
 
 
-def parse_codepoint(string):
+def _parse_codepoint(string):
     lower = string.lower()
     if lower.startswith('u+'):
         _, hex_part = lower.split('+')
@@ -37,11 +38,11 @@ def parse_codepoint(string):
             f'Could not interpret codepoint: {string}')
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser(
         description='Search font files for a glyph')
     parser.add_argument('--recursive', '-R', action='store_true')
-    parser.add_argument('codepoint', type=parse_codepoint)
+    parser.add_argument('codepoint', type=_parse_codepoint)
     parser.add_argument('file', nargs='+')
     args = parser.parse_args()
 
@@ -58,7 +59,7 @@ def main():
             to_scan.append(path)
 
     for path in to_scan:
-        for font_num, flavor, description in find_glyph(path, args.codepoint):
+        for font_num, flavor, description in _find_glyph(path, args.codepoint):
             flavor_txt = f'platformID {flavor[0]}; platEncId {flavor[1]}'
             if path.suffix == '.ttc':
                 print(f'{path} (font {font_num}; {flavor_txt}):',
@@ -69,6 +70,6 @@ def main():
 
 if __name__ == '__main__':
     try:
-        main()
+        _main()
     except KeyboardInterrupt:
         pass

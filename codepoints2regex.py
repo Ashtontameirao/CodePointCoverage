@@ -1,14 +1,16 @@
-# cat a list of Unicode codepoints (one on each line, in U+XXXX
-# format) to get a regex character class representing those characters
-# with contiguous ranges collapsed. Unicode literals will be in
-# Python-style notation (\uXXXX, \UXXXXXXXX).
+r"""
+Generate a regex character class representing the input.
+
+cat a list of Unicode codepoints, one on each line in U+XXXX format. Unicode
+literals will be in Python-style notation (\uXXXX, \UXXXXXXXX).
+"""
 
 import sys
 
 is_javascript = 'js' in sys.argv
 
 
-def is_surrogate(codepoint):
+def _is_surrogate(codepoint):
     return 0xd800 <= codepoint and codepoint <= 0xdfff
 
 
@@ -17,7 +19,7 @@ ranges = []
 for line in sys.stdin:
     _, hx = line.strip().split(maxsplit=1)[0].split('+')
     n = int(hx, base=16)
-    if is_javascript and is_surrogate(n):
+    if is_javascript and _is_surrogate(n):
         # Including surrogates gives false matches with JavaScript. A minimal
         # case is:
         #
