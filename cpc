@@ -5,28 +5,28 @@ set -euo pipefail
 function diff() {
     f1=data/$1-glyphs.txt
     f2=data/$2-glyphs.txt
-    cat $f1 $f2 | cut -d ' ' -f 1 | sort | uniq -u
+    cat "$f1" "$f2" | cut -d ' ' -f 1 | sort | uniq -u
 }
 
 function diffText() {
-    diff $1 $2 | python codepoints2text.py
+    diff "$1" "$2" | python codepoints2text.py
 }
 
 function available() {
-    codepoints=$(echo $1 | python text2codepoints.py)
-    result=$(_availableImpl $(echo a | python text2codepoints.py))
+    codepoints=$(echo "$1" | python text2codepoints.py)
+    result=$(_availableImpl "$(echo a | python text2codepoints.py)")
     for cp in $codepoints; do
-        thisResult=$(_availableImpl $cp)
-        result=$(echo $result $thisResult | tr ' ' '\n' | sort | uniq -d)
+        thisResult=$(_availableImpl "$cp")
+        result=$(echo "$result" "$thisResult" | tr ' ' '\n' | sort | uniq -d)
     done
-    echo $result | tr ' ' '\n'
+    echo "$result" | tr ' ' '\n'
 }
 
 function _availableImpl() {
-    for f in $(grep -l $1 data/*-glyphs.txt); do
+    grep -l "$1" data/*-glyphs.txt | while IFS= read -r f; do
         f=${f##*/}
         f=${f%%-*}
-        echo $f
+        echo "$f"
     done
 }
 
