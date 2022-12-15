@@ -3,8 +3,8 @@
 set -euo pipefail
 
 function diff() {
-    f1=data/$1-glyphs.txt
-    f2=data/$2-glyphs.txt
+    local f1=data/$1-glyphs.txt
+    local f2=data/$2-glyphs.txt
     cat "$f1" "$f2" | cut -d ' ' -f 1 | sort | uniq -u
 }
 
@@ -13,9 +13,12 @@ function diffText() {
 }
 
 function available() {
+    local codepoints
     codepoints=$(echo "$1" | python text2codepoints.py)
+    local result
     result=$(_availableImpl "$(echo a | python text2codepoints.py)")
     for cp in $codepoints; do
+        local thisResult
         thisResult=$(_availableImpl "$cp")
         result=$(echo "$result" "$thisResult" | tr ' ' '\n' | sort | uniq -d)
     done
@@ -23,6 +26,7 @@ function available() {
 }
 
 function _availableImpl() {
+    local f
     grep -l "$1" data/*-glyphs.txt | while IFS= read -r f; do
         f=${f##*/}
         f=${f%%-*}
