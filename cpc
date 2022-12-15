@@ -5,7 +5,11 @@ set -euo pipefail
 function diff() {
     local f1=data/$1-glyphs.txt
     local f2=data/$2-glyphs.txt
-    cat "$f1" "$f2" | cut -d ' ' -f 1 | sort | uniq -u
+    echo Added
+    comm -13 <(cut -d ' ' -f 1 "$f1") <(cut -d ' ' -f 1 "$f2")
+    echo
+    echo Removed
+    comm -23 <(cut -d ' ' -f 1 "$f1") <(cut -d ' ' -f 1 "$f2")
 }
 
 function diffText() {
