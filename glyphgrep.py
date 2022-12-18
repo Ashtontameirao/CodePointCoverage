@@ -3,6 +3,7 @@
 import re
 import argparse
 import pathlib
+import logging
 
 from fontTools.ttLib import TTFont, TTCollection
 
@@ -41,10 +42,14 @@ def _parse_codepoint(string):
 def _main():
     parser = argparse.ArgumentParser(
         description='Search font files for a glyph')
+    parser.add_argument('--verbose', '-v', action='store_true')
     parser.add_argument('--recursive', '-R', action='store_true')
     parser.add_argument('codepoint', type=_parse_codepoint)
     parser.add_argument('file', nargs='+')
     args = parser.parse_args()
+
+    logging.getLogger('fontTools').setLevel(
+        logging.DEBUG if args.verbose else logging.ERROR)
 
     to_scan = []
     for path in args.file:
