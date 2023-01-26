@@ -69,7 +69,7 @@ data/$(combo)-common-glyphs.txt: data/$(ios)-glyphs.txt data/$(android)-glyphs.t
 
 %.g.dart: %-glyphs-regex-js.txt
 	identifier=$$(echo $(*) | sed -E -e 's!.*/|-.*!!g;s![^a-zA-Z0-9$$]!_!g'); \
-		printf "final RegExp %sPattern = RegExp(\n  // ignore: valid_regexps\n  '%s',\n  unicode: true,\n);" $$identifier $$(cat $(<)) > $(@)
+		printf "final RegExp %sPattern = RegExp(\n  '%s',\n  unicode: true,\n);\n" $$identifier $$(cat $(<)) > $(@)
 
 ### Data collection
 
