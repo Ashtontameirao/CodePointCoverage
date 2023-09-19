@@ -3,7 +3,7 @@ SHELL := /bin/bash
 ios_versions := $(addprefix ios,8.0 8.1 8.2 8.3 8.4 9.0 9.1 9.2 9.3 10.0 10.1 10.2 10.3 \
 	11.0 11.1 11.2 11.3 11.4 12.0 12.1 12.2 12.4 13.0 13.1 13.2 13.3 13.4 13.5 13.6 13.7 \
 	14.0 14.1 14.2 14.3 14.4 14.5 14.6 14.7 14.8 15.0 15.1 15.2 15.3 15.4 15.5 15.6 15.7 \
-    16.0 16.1 16.2 16.3 16.4 16.5 16.6)
+    16.0 16.1 16.2 16.3 16.4 16.5 16.6 17.0)
 ios_latest := $(lastword $(ios_versions))
 android_versions := $(addprefix android,10 15 16 17 18 19 21 22 23 24 25 26 27 28 29 30 31 32 33 34)
 all_versions := $(ios_versions) $(android_versions)
@@ -119,11 +119,16 @@ ios%-app-glyphs.txt: ios%-raw.txt
 #  iOS 13.4: Xcode 11.4
 #  iOS 13.5: Xcode 11.5
 #   Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
+# case
+#  iOS 17.0: Xcode 15.0
+#   Install iOS runtime separately; contents are mounted at /Library/Developer/CoreSimulator/Volumes/
 
-ios_fonts = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts
-ios_plist = $(shell xcrun --sdk iphoneos --show-sdk-platform-path)/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Info.plist
+ios_runtime_volumes := /Library/Developer/CoreSimulator/Volumes
+ios_fonts = $(wildcard $(ios_runtime_volumes)/*/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS*.simruntime/Contents/Resources/RuntimeRoot/System/Library/Fonts)
+ios_plist = $(wildcard $(ios_runtime_volumes)/*/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS*.simruntime/Contents/Info.plist)
 
 ios%-glyphs.txt: | .env
+	$(if $(ios_plist),,$(error No iOS simulator runtime found))
 	$(info Gathering codepoints for $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleName' $(ios_plist)))
 	find "$(ios_fonts)" \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) \
 		! -name 'LastResort.*' -print0 \
