@@ -129,7 +129,7 @@ ios_plist = $(wildcard $(ios_runtime_volumes)/*/Library/Developer/CoreSimulator/
 
 ios%-glyphs.txt: | .env
 	$(if $(ios_plist),,$(error No iOS simulator runtime found))
-	$(info Gathering codepoints for $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleName' $(ios_plist)))
+	$(info Gathering codepoints for $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$(ios_plist)"))
 	find "$(ios_fonts)" \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) \
 		! -name 'LastResort.*' -print0 \
 			| xargs -0 .env/bin/python list-ttf-chars.py >$(@)
