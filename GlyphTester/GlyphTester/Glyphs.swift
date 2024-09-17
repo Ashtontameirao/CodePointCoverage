@@ -54,7 +54,8 @@ class Glyphs {
     static func getLineForCodePoint(_ codePoint: Int) -> String {
         let label: String
         do {
-            label = try getNameForCodePoint(codePoint)
+            let (glyphName, fontName) = try getNameForCodePoint(codePoint)
+            label = "\(glyphName) \(fontName)"
         } catch CodePointNamingError.nameUnavailable(let msg) {
             label = "(\(msg))"
         } catch {
@@ -64,7 +65,7 @@ class Glyphs {
         return String(format: "U+%06x \(label)\n", codePoint)
     }
     
-    static func getNameForCodePoint(_ codePoint: Int) throws -> String {
+    static func getNameForCodePoint(_ codePoint: Int) throws -> (String, String) {
         guard let scalar = UnicodeScalar(codePoint) else {
             throw CodePointNamingError.nameUnavailable("failed to get Unicode scalar")
         }
@@ -87,7 +88,7 @@ class Glyphs {
             throw CodePointNamingError.nameUnavailable("failed to get glyph name")
         }
         //print(name)
-        return name as String
+        return (name as String, font.fontName)
     }
     
 }
