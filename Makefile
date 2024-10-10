@@ -160,7 +160,7 @@ avd_sdk_version = $(shell adb shell getprop ro.build.version.sdk)
 avd-fonts: ## Dump fonts from a running Android Virtual Device
 avd-fonts:
 	mkdir -p vendor/android-$(avd_sdk_version)
-	adb pull /system/fonts vendor/android-$(avd_sdk_version)/fonts
+	adb pull /system/fonts vendor/android-$(avd_sdk_version)/
 
 .PHONY: help
 help: ## Show this help text
