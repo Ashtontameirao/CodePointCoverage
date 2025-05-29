@@ -139,6 +139,14 @@ ios%-glyphs.txt: | .env
 		! -name 'LastResort.*' -print0 \
 			| xargs -0 .env/bin/python list-ttf-chars.py >$(@)
 
+.PHONY: ios-fonts
+ios-fonts: | .env
+	$(if $(ios_plist),,$(error No iOS simulator runtime found))
+	$(info Listing fonts in $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$(ios_plist)"))
+	find "$(ios_fonts)" "$(ios_private_fonts)" \( -name '*.ttf' -o -name '*.ttc' -o -name '*.otf' \) \
+		! -name 'LastResort.*' -print0 \
+			| xargs -0 basename
+
 # Through SDK 25, android%-glyphs.txt are generated from the files in the /fonts
 # directory of the x86 system.img for that platform version. Note that the fonts
 # included in the "Platform" package at
