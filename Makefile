@@ -6,7 +6,7 @@ ios_versions := $(addprefix ios,8.0 8.1 8.2 8.3 8.4 9.0 9.1 9.2 9.3 10.0 10.1 10
     16.0 16.1 16.2 16.3 16.4 16.5 16.6 17.0 17.1 17.2 17.3 17.4 17.5 17.6 17.7 18.0 18.1 \
 	18.2 18.3 18.4 18.5)
 ios_latest := $(lastword $(ios_versions))
-android_versions := $(addprefix android,10 15 16 17 18 19 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35)
+android_versions := $(addprefix android,10 15 16 17 18 19 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36)
 all_versions := $(ios_versions) $(android_versions)
 android_latest := $(lastword $(android_versions))
 
