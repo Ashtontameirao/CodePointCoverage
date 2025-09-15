@@ -58109,12 +58109,6 @@ U+01106c brm_digit6
 U+01106d brm_digit7
 U+01106e brm_digit8
 U+01106f brm_digit9
-U+011070 viramaTamil-brahmi
-U+011071 eShort-brahmi
-U+011072 oShort-brahmi
-U+011073 eShortMatra-brahmi
-U+011074 oShortMatra-brahmi
-U+011075 llaTamil-brahmi
 U+01107f u1107F
 U+011080 ktVSCBindu
 U+011081 ktVSAnusvara
