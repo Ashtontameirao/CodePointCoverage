@@ -891,7 +891,6 @@ U+00037b u037B
 U+00037c u037C
 U+00037d u037D
 U+00037e greekquestionmark
-U+00037f u037F
 U+000384 tonosgreek
 U+000385 dieresistonosgreek
 U+000386 Alphatonosgreek
