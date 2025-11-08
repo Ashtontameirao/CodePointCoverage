@@ -6576,6 +6576,7 @@ U+0020bb uni20BB
 U+0020bc manat
 U+0020bd uni20BD
 U+0020be lari
+U+0020bf uni20BF
 U+0020d0 uni20D0
 U+0020d1 uni20D1
 U+0020d2 uni20D2
