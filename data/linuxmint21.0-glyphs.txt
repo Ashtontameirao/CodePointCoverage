@@ -5245,6 +5245,7 @@ U+001a19 uni1A19
 U+001a1a uni1A1A
 U+001a1b uni1A1B
 U+001a1e uni1A1E
+U+001a1f uni1A1F
 U+001ab0 uni1AB0
 U+001ab1 uni1AB1
 U+001ab2 uni1AB2
@@ -5262,7 +5263,6 @@ U+001abd uni1ABD
 U+001abe uni1ABE
 U+001abf uni1ABF
 U+001ac0 uni1AC0
-U+001a1f uni1A1F
 U+001c80 uni1C80
 U+001c81 uni1C81
 U+001c82 uni1C82
