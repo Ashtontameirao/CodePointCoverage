@@ -2675,6 +2675,7 @@ U+000cee eight_kannada
 U+000cef nine_kannada
 U+000cf1 jihvamuliya_kannada
 U+000cf2 upadhmaniya_kannada
+U+000cf3 uni0CF3
 U+000d00 uni0D00
 U+000d01 candrabindumlym
 U+000d02 anusvaramlym
