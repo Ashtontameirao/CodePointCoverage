@@ -2962,8 +2962,6 @@ U+000ed8 eight-lao
 U+000ed9 nine-lao
 U+000edc hoNo-lao
 U+000edd hoMo-lao
-U+000ede khmuGo-lao
-U+000edf khmuNyo-lao
 U+000f00 uni0F00
 U+000f01 uni0F01
 U+000f02 uni0F02
