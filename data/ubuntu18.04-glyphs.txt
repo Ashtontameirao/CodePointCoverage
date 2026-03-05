@@ -5402,6 +5402,9 @@ U+001dbc uni1DBC
 U+001dbd uni1DBD
 U+001dbe uni1DBE
 U+001dbf uni1DBF
+U+001dc0 uni1DC0
+U+001dc1 uni1DC1
+U+001dc2 uni1DC2
 U+001dc3 uni1DC3
 U+001dc4 uni1DC4
 U+001dc5 uni1DC5
