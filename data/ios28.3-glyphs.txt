@@ -9874,6 +9874,7 @@ U+002bfa uni2BFA
 U+002bfb uni2BFB
 U+002bfc uni2BFC
 U+002bfd uni2BFD
+U+002bfe uni2BFE
 U+002bff uni2BFF
 U+002c00 uni2C00
 U+002c01 uni2C01
