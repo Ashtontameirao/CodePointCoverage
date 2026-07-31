@@ -1473,7 +1473,7 @@ U+000607 uni0607
 U+000608 uni0608
 U+000609 uni0609
 U+00060a uni060A
-U+00060b uni060B
+U+00060b afghani
 U+00060c uni060C
 U+00060d uni060D
 U+00060e uni060E
@@ -7074,6 +7074,7 @@ U+0020bc manat
 U+0020bd uni20BD
 U+0020be lari
 U+0020bf bitcoin
+U+0020c1 riyal
 U+0020d0 uni20D0
 U+0020d1 uni20D1
 U+0020d2 uni20D2
@@ -55309,9 +55310,9 @@ U+00fdc6 u0633_u062e_u064a.final.glyphFDC6
 U+00fdc7 u0646_u062c_u064a.final.glyphFDC7
 U+00fdf0 u0635_u0644_u06d2.isolated.glyphFDF0
 U+00fdf1 u0642_u0644_u06d2.isolated.glyphFDF1
-U+00fdf2 uniFDF2
+U+00fdf2 allah
 U+00fdf3 u0627_u0643_u0628_u0631.isolated.glyphFDF3
-U+00fdf4 uniFDF4
+U+00fdf4 mohammad
 U+00fdf5 u0635_u0644_u0639_u0645.isolated.glyphFDF5
 U+00fdf6 u0631_u0633_u0648_u0644.isolated.glyphFDF6
 U+00fdf7 u0639_u0644_u064a_u0647.isolated.glyphFDF7
@@ -55319,7 +55320,7 @@ U+00fdf8 u0648_u0633_u0644_u0645.isolated.glyphFDF8
 U+00fdf9 u0635_u0644_u0649.isolated.glyphFDF9
 U+00fdfa uniFDFA
 U+00fdfb uniFDFB
-U+00fdfc riyal
+U+00fdfc rial.Irani
 U+00fdfd uniFDFD
 U+00fe00 uniFE00
 U+00fe0e uniFE0E
